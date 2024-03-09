@@ -15,13 +15,12 @@ return function (RouteCollector $r) {
         $r->addRoute('GET', '', [CloudController::class, 'index']);
         $r->addRoute('GET', '/leaderboard', [CloudController::class, 'getLeaderboardData']);
         $r->addRoute('GET', '/posts', [CloudController::class, 'getPosts']);
-        $r->addRoute('GET', '/event/handle', [CloudController::class, 'handleEventAdded']);
+        $r->addRoute('GET', '/event/handle/{eventId}', [CloudController::class, 'handleEventAdded']);
         $r->addRoute('GET', '/event/check', [CloudController::class, 'scheduledEventDateCheck']);
         $r->addRoute('GET', '/alerts', [CloudController::class, 'getAlerts']);
-        $r->addRoute('GET', '/alerts/handle', [CloudController::class, 'handleAlertAdded']);
+        $r->addRoute('GET', '/alerts/handle/{alertId}', [CloudController::class, 'handleAlertAdded']);
         $r->addRoute('GET', '/alerts/delete', [CloudController::class, 'deleteAlerts']);
 
-        $r->addRoute('GET', '/my/{name}', [MyCloudController::class, 'welcome']);
         $r->addRoute('GET', '/noti', [MyCloudController::class, 'sendNotification']);
         $r->addRoute('GET', '/noti/{topic}', [MyCloudController::class, 'sendNotificationToTopic']);
 

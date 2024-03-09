@@ -34,13 +34,15 @@ class CloudController extends Controller
         return $posts;
     }
 
-    public function handleEventAdded($eventId)
+    public function handleEventAdded($request)
     {
+        $eventId = $request['eventId'];
         $this->cloudService->handleEventAdded($eventId);
     }
 
-    public function handleAlertAdded($alertId)
+    public function handleAlertAdded($request)
     {
+        $alertId = $request['alertId'];
         $this->cloudService->handleAlertAdded($alertId);
     }
 

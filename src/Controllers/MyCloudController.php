@@ -61,10 +61,11 @@ class MyCloudController extends Controller
         return $response;
     }
 
-    public function sendNotificationToTopic($vars)
+    public function sendNotificationToTopic($request)
     {
         
-        //$topic = $vars['topic'];
+        $topicv = $request['topic'];
+        
         $title = 'Test Notification';
         $body = 'This is a test notification';
         $topic = 'hospital'; // user, hospital

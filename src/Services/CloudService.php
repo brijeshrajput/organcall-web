@@ -71,11 +71,18 @@ class CloudService
     //EventAdded function
     public function handleEventAdded($eventId)
     {
+        if ($eventId == null) {
+            return false; // Return false if eventId is null
+        }
         // Reference to the newly created event
         $eventRef = $this->database->getReference('/Events/' . $eventId);
 
         // Get event data
         $eventData = $eventRef->getValue();
+
+        if ($eventData == null) {
+            return false; // Return false if event data is null
+        }
 
         // Determine message condition
         $messageCondition = '\'events\' in topics';
@@ -90,7 +97,7 @@ class CloudService
 
         // Send message
         $this->sendMessage($message);
-
+        dump('Event added');
         return true; // Return true if handling is successful
     }
 
@@ -109,32 +116,37 @@ class CloudService
         // Get hospital data
         $hospitalData = $hospitalRef->getValue();
 
+        if ($alertData == null || $hospitalData == null) {
+            return false; // Return false if alert or hospital data is null
+        }
+
+        // Eyes, Kidneys, Lungs, Heart
         // Determine message condition based on blood type
         $bloodType = str_replace(['+', '-'], ['pos', 'neg'], $alertData['bloodType']);
         switch ($bloodType) {
-            case 'Apos':
-                $messageCondition = '\'Apos\' in topics || \'Aneg\' in topics || \'Oneg\' in topics || \'Opos\' in topics';
+            case 'Eyespos':
+                $messageCondition = '\'Eyespos\' in topics';
                 break;
-            case 'Opos':
-                $messageCondition = '\'Oneg\' in topics || \'Opos\' in topics';
+            case 'Eyesneg':
+                $messageCondition = '\'Eyesneg\' in topics';
                 break;
-            case 'Bpos':
-                $messageCondition = '\'Bpos\' in topics || \'Bneg\' in topics || \'Oneg\' in topics || \'Opos\' in topics';
+            case 'Kidneyspos':
+                $messageCondition = '\'Kidneyspos\' in topics';
                 break;
-            case 'ABpos':
-                $messageCondition = '\'Apos\' in topics || \'ABpos\' in topics || \'Opos\' in topics || \'Bpos\' in topics || \'Oneg\' in topics';
+            case 'Kidneysneg':
+                $messageCondition = '\'Kidneysneg\' in topics';
                 break;
-            case 'Aneg':
-                $messageCondition = '\'Aneg\' in topics || \'Oneg\' in topics';
+            case 'Lungspos':
+                $messageCondition = '\'Lungspos\' in topics';
                 break;
-            case 'Oneg':
-                $messageCondition = '\'Oneg\' in topics';
+            case 'Lungsneg':
+                $messageCondition = '\'Lungsneg\' in topics';
                 break;
-            case 'Bneg':
-                $messageCondition = '\'Bneg\' in topics || \'Oneg\' in topics';
+            case 'Heartpos':
+                $messageCondition = '\'Heartpos\' in topics';
                 break;
-            case 'ABneg':
-                $messageCondition = '\'ABneg\' in topics || \'Aneg\' in topics || \'Oneg\' in topics || \'Bneg\' in topics';
+            case 'Heartneg':
+                $messageCondition = '\'Heartneg\' in topics';
                 break;
             default:
                 $messageCondition = ''; // Default condition
@@ -152,16 +164,8 @@ class CloudService
 
         // Send message
         $this->sendMessage($message);
-
+        dump('Alert added');
         return true; // Return true if handling is successful
-    }
-
-    private function sendMessage($message)
-    {
-        // Implement your logic to send message here
-        // Example: use Firebase Cloud Messaging (FCM) or any other messaging service
-        echo 'Message sent:', PHP_EOL;
-        var_dump($message);
     }
 
     //checking event dates and deleting expired events
@@ -225,5 +229,34 @@ class CloudService
         });
 
         return $alerts;
+    }
+
+    private function sendMessage($message)
+    {
+        $response = $this->notificationSender->sendMessage($message);
+        
+        if ($response == true){
+            return true;
+        }
+        return $response;
+    }
+
+    private function sendNotification($title, $body, $topic = null, $messageCondition=null)
+    {
+        if(!$topic == null)
+        {
+            // Send notification with condition
+            return $this->notificationSender->sendNotification($title, $body, $topic);
+        } 
+        else if(!$messageCondition == null)
+        {
+            // Send notification with topic
+            return $this->notificationSender->sendNotification($title, $body, $messageCondition);
+        } else {
+            // Send notification with topic and condition
+            //return $this->notificationSender->sendNotification($title, $body, $topic, $messageCondition);
+            return false;
+        }
+        
     }
 }

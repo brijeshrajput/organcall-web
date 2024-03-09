@@ -25,7 +25,7 @@ class NotificationSender
             // Construct the message
             $messageBuilder = CloudMessage::new();
             $messageBuilder->withNotification($notification);
-            
+
             $message = CloudMessage::new();
 
             if ($topic !== null) {
@@ -56,9 +56,7 @@ class NotificationSender
                 $messageBuilder->withData($key, $value);
             }
 
-            if ($topic !== null) {
-                $messageBuilder->withTopic($topic);
-            }
+            
 
             // Send the message
             $this->messaging->send($messageBuilder->build());
@@ -101,6 +99,23 @@ class NotificationSender
             // Return an error response
             return 'Error sending notification: ' . $e->getMessage();
         }
-        
+
+    }
+
+    function sendMessage($message)
+    {
+        $messaging = $this->messaging;
+
+        // Construct the message
+        $message = CloudMessage::fromArray($message);
+
+        // Send the message
+        try {
+            $messaging->send($message);
+            return true;
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $e->getMessage();
+        }
     }
 }

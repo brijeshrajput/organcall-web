@@ -101,7 +101,7 @@ switch ($routeInfo[0]) {
         try {
             $response = $controller->$method($vars);
         } catch (\Exception $e) {
-            $response = 'Error: '.$e->getMessage();
+            $response = 'Method Error: '.$e->getMessage();
             dd($response);
         }
         //$response = $controller->$method($vars);
