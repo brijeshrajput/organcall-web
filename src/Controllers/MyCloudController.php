@@ -21,16 +21,56 @@ class MyCloudController extends Controller
         return $this->view('welcome', ['name' => 'Brijesh']);
     }
 
+    public function welcome($request)
+    {
+        $name = $request['name'];
+        return $this->view('welcome', ['name' => $name]);
+    }
+
     public function getAllUsers()
     {
         $users = $this->cloudService->getAllUsers();
         return $users;
     }
     
-    public function getLeaderboardData()
+    public function getAllTokens()
     {
-        $leaderboardData = $this->cloudService->getLeaderboardData();
-        return $leaderboardData;
+        $tokensData = $this->cloudService->getNotificationTokensFromDB();
+        return $tokensData;
+    }
+
+    public function getUsersFromDB()
+    {
+        $users = $this->cloudService->getAllUsersFromDB();
+        return $users;
+    }
+
+    public function getHospitalsFromDB()
+    {
+        $hospitals = $this->cloudService->getAllHospitalsFromDB();
+        return $hospitals;
+    }
+
+    public function sendNotification()
+    {
+        $title = 'Test Notification';
+        $body = 'This is a test notification';
+        $topic = 'hospital'; // user, hospital
+
+        $response = $this->cloudService->sendNotification($title, $body, $topic);
+        return $response;
+    }
+
+    public function sendNotificationToTopic($vars)
+    {
+        
+        //$topic = $vars['topic'];
+        $title = 'Test Notification';
+        $body = 'This is a test notification';
+        $topic = 'hospital'; // user, hospital
+
+        $response = $this->cloudService->sendNotification($title, $body, $topic);
+        return $response;
     }
 
 }

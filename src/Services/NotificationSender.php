@@ -12,10 +12,8 @@ class NotificationSender
 
     public function __construct()
     {
-        //$serviceAccount = ROOT_DIR . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'serviceAccount.json';
-        $serviceAccount = SERVICE_ACCOUNT;
-        $factory = (new Factory)->withServiceAccount($serviceAccount);
-        $this->messaging = $factory->createMessaging();
+        $dbCon = new DbCon();
+        $this->messaging = $dbCon->getMessaging();
     }
 
     public function sendNotification($title, $body, $topic = null)

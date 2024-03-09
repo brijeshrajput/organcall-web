@@ -21,10 +21,21 @@ return function (RouteCollector $r) {
         $r->addRoute('GET', '/alerts/handle', [CloudController::class, 'handleAlertAdded']);
         $r->addRoute('GET', '/alerts/delete', [CloudController::class, 'deleteAlerts']);
 
+        $r->addRoute('GET', '/my/{name}', [MyCloudController::class, 'welcome']);
+        $r->addRoute('GET', '/noti', [MyCloudController::class, 'sendNotification']);
+        $r->addRoute('GET', '/noti/{topic}', [MyCloudController::class, 'sendNotificationToTopic']);
+
 
         $r->addRoute('GET', '/users', [MyCloudController::class, 'getAllUsers']);
+        $r->addRoute('GET', '/tokens', [MyCloudController::class, 'getAllTokens']);
+
+        $r->addRoute('GET', '/get/users', [MyCloudController::class, 'getUsersFromDB']);
+        $r->addRoute('GET', '/get/hospitals', [MyCloudController::class, 'getHospitalsFromDB']);
 
     });
+
+    $r->addRoute('GET', '/my', [MyCloudController::class, 'index']);
+    $r->addRoute('GET', '/my/{name}', [MyCloudController::class, 'welcome']);
 
     // Define routes for the admin section
     $r->addGroup('/admin', function (RouteCollector $r) {

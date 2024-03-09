@@ -93,8 +93,18 @@ switch ($routeInfo[0]) {
         // Instantiate controller
         $controller = new $controllerClass($viewFactory);
 
+        // convert associative array to indexed array
+        //$vars = array_values($vars);
+
         // Call controller method
-        $response = call_user_func_array([$controller, $method], $vars);
+        //$response = call_user_func_array([$controller, $method], $vars);
+        try {
+            $response = $controller->$method($vars);
+        } catch (\Exception $e) {
+            $response = 'Error: '.$e->getMessage();
+            dd($response);
+        }
+        //$response = $controller->$method($vars);
 
         // Check if the response is a view
         if ($response instanceof \Illuminate\Contracts\View\View) {

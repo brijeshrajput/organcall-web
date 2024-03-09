@@ -16,6 +16,7 @@ class MyCloudService
         $dbCon = new DbCon();
         $this->database = $dbCon->getDatabase();
         $this->auth = $dbCon->getAuth();
+
         $this->notificationSender = new NotificationSender();
     }
 
@@ -96,5 +97,172 @@ class MyCloudService
         }
     }
 
+
+    public function getUserFromDB($userId)
+    {
+        try {
+            // Retrieve user data from the database
+            $snapshot = $this->database->getReference('/Users/' . $userId)->getSnapshot();
+
+            if (!$snapshot->exists()) {
+                // Return null if user data does not exist
+                return [];
+            }
+
+            // Convert snapshot data to an array and return it
+            $userData = $snapshot->getValue();
+
+            // Prepare the user array with the same structure as the database
+            $userArray = [
+                'id' => $userData['id'],
+                'fullName' => $userData['fullName'],
+                'email' => $userData['email'],
+                'bloodType' => $userData['bloodType'],
+                'xp' => $userData['xp'],
+                // Add other fields as needed
+            ];
+
+            return $userArray;
+        } catch (\Exception $e) {
+            // Handle errors
+            $error = 'Error getting user data: ' . $e->getMessage();
+            error_log($error);
+            return null;
+        }
+    }
+
+    public function getAllUsersFromDB()
+    {
+        try {
+            // Retrieve all users data from the database
+            $snapshot = $this->database->getReference('/Users')->getSnapshot();
+
+            // Initialize an array to hold all users
+            $allUsers = [];
+
+            if (!$snapshot->exists()) {
+                // Return null if user data does not exist
+                return [];
+            }
+
+            // Loop through each user data
+            foreach ($snapshot->getValue() as $userId => $userData) {
+                // Prepare user array with the same structure as the database
+                $userArray = [
+                    'id' => $userId,
+                    'fullName' => $userData['fullName'],
+                    'email' => $userData['email'],
+                    'bloodType' => $userData['bloodType'],
+                    'xp' => $userData['xp'],
+                    // Add other fields as needed
+                ];
+
+                // Add the user array to the array of all users
+                $allUsers[] = $userArray;
+            }
+
+            return $allUsers;
+        } catch (\Exception $e) {
+            // Handle errors
+            $error = 'Error getting all users data: ' . $e->getMessage();
+            error_log($error);
+            return null;
+        }
+    }
+
+
+    public function getAllHospitalsFromDB()
+    {
+        try {
+            // Retrieve all hospitals data from the database
+            $snapshot = $this->database->getReference('/Hospitals')->getSnapshot();
+
+            // Initialize an array to hold all hospitals
+            $allHospitals = [];
+
+            if (!$snapshot->exists()) {
+                // Return null if user data does not exist
+                return [];
+            }
+
+            // Loop through each user data
+            foreach ($snapshot->getValue() as $userId => $userData) {
+                // Prepare user array with the same structure as the database
+                $userArray = [
+                    'id' => $userId,
+                    'name' => $userData['name'],
+                    'email' => $userData['email'],
+                    'address' => $userData['address'],
+                    'serviced' => $userData['serviced'],
+                    // Add other fields as needed
+                ];
+
+                // Add the user array to the array of all users
+                $allHospitals[] = $userArray;
+            }
+
+            return $allHospitals;
+        } catch (\Exception $e) {
+            // Handle errors
+            $error = 'Error getting all hospitals data: ' . $e->getMessage();
+            error_log($error);
+            return null;
+        }
+    }
+
+
+    public function getNotificationTokensFromDB()
+    {
+        try {
+            // Retrieve all notification tokens data from the database
+            $snapshot = $this->database->getReference('/notificationTokens')->getSnapshot();
+
+            // Initialize an array to hold all notification tokens
+            $notificationTokens = [];
+
+            if (!$snapshot->exists()) {
+                // Return null if user data does not exist
+                return [];
+            }
+
+            // Loop through each user's notification token data
+            foreach ($snapshot->getValue() as $userId => $token) {
+                // Add the user ID and notification token to the array
+                $notificationTokens[$userId] = $token;
+            }
+
+            return $notificationTokens;
+        } catch (\Exception $e) {
+            // Handle errors
+            $error = 'Error getting notification tokens data: ' . $e->getMessage();
+            error_log($error);
+            return null;
+        }
+    }
+
+    public function getUserTokenFromDB($userId)
+    {
+        try {
+            // Retrieve the notification token for the specified user ID from the database
+            $snapshot = $this->database->getReference('/notificationTokens/' . $userId)->getSnapshot();
+
+            if (!$snapshot->exists()) {
+                return null;
+            }
+
+            // Return the notification token
+            return $snapshot->getValue();
+        } catch (\Exception $e) {
+            // Handle errors
+            $error = 'Error getting notification token for user ID ' . $userId . ': ' . $e->getMessage();
+            error_log($error);
+            return null;
+        }
+    }
+
+    public function sendNotification($title, $body, $topic = null)
+    {
+        return $this->notificationSender->sendNotification_old($title, $body, $topic);
+    }
 
 }
